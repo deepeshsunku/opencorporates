@@ -141,7 +141,7 @@ module.exports = function(apiToken){
 				options = options || {};
 				options.q = searchTerm; // 'q' is OpenCorporates-speak for search query
 				var response = await openCorporatesGet(`jurisdictions/match`, options)
-				return getCleanArray(response.results.corporateGroupings, 'corporateGrouping' )
+				return response.results.jurisdiction
 			}
 		}
 	}
