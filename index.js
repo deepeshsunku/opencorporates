@@ -135,6 +135,14 @@ module.exports = function(apiToken){
 				var response = await openCorporatesGet(`corporate_groupings/search`, options)
 				return getCleanArray(response.results.corporateGroupings, 'corporateGrouping' )
 			}
+		},
+		jurisdictions: {
+			match: async function(searchTerm, options){
+				options = options || {};
+				options.q = searchTerm; // 'q' is OpenCorporates-speak for search query
+				var response = await openCorporatesGet(`jurisdictions/match`, options)
+				return getCleanArray(response.results.corporateGroupings, 'corporateGrouping' )
+			}
 		}
 	}
 }
