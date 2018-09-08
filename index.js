@@ -8,7 +8,7 @@ var API_VERSION = '0.4'
 
 var ENDPOINT = `https://api.opencorporates.com/v${API_VERSION}/`
 
-var USER_AGENT = 'opencorporates.js (https://github.com/mikemaccana/opencorporates)'
+var USER_AGENT = 'opencorporates.js (https://github.com/deepeshsunku/opencorporates)'
 
 var OPEN_CORPORATES_ERRORS = {
 	304: 'Not Modified: There was no new data to return.',
@@ -61,11 +61,33 @@ module.exports = function(apiToken){
 		return query
 	}
 
-	var openCorporatesGet = async function(path, rawQuery) {
+	var formatTokenLessQuery = function(rawQuery){
+		// Convert JS style into OC API
+		var query = {}
+		Object.keys(rawQuery).forEach(function(keyName){
+			var value = rawQuery[keyName]
+			// Convert arrays to pipe separated strings
+			if ( Array.isArray(value) ) {
+				value = value.join('|')
+			}
+			// Convert JS style camelCase query options to snake_case
+			query[changeCase.snakeCase(keyName)] = value
+		})
+
+		return query
+	}
+
+	var openCorporatesGet = async function(path, rawQuery, woToken) {
 
 		rawQuery = rawQuery || {}
 
 		var query = formatQuery(rawQuery)
+
+		// Do not use token for general search
+		if(woToken) {
+			query = formatTokenLessQuery(rawQuery)
+			console.log("QUERY", query);
+		}
 
 		var response = await superagent
 			.get(ENDPOINT+path)
@@ -140,7 +162,7 @@ module.exports = function(apiToken){
 			match: async function(searchTerm, options){
 				options = options || {};
 				options.q = searchTerm; // 'q' is OpenCorporates-speak for search query
-				var response = await openCorporatesGet(`jurisdictions/match`, options)
+				var response = await openCorporatesGet(`jurisdictions/match`, options, true)
 				return response.results.jurisdiction
 			}
 		}
