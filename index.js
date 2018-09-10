@@ -86,7 +86,6 @@ module.exports = function(apiToken){
 		// Do not use token for general search
 		if(woToken) {
 			query = formatTokenLessQuery(rawQuery)
-			console.log("QUERY", query);
 		}
 
 		var response = await superagent
